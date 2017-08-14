@@ -1,0 +1,1 @@
+sudo docker run --rm -v /var/lib/postgresql/data -e POSTGRES_USER=question -e POSTGRES_PASSWORD=question -p 5432:5432 --name questions -d postgres:9.6-alpine

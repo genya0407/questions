@@ -1,5 +1,5 @@
-CREATE TABLE question (
+CREATE TABLE questions (
 	id serial primary key,
-	user_id int not null,
+	username text not null,
 	body text not null
 );

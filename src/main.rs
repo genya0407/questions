@@ -40,9 +40,7 @@ fn create(conn: DbConn, username: &RawStr, body: &RawStr) -> String {
         username: username.to_string(),
         body: body.to_string()
     };
-    println!("{:?}", q.id);
     q.insert();
-    println!("{:?}", q.id);
 	String::from("create!")
 }
 

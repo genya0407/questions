@@ -55,6 +55,14 @@ pub trait ActiveRecord<'a> : Sized {
 	fn set_primary_key(&mut self) -> &mut Option<i32>;
 	fn columns(&self) -> HashMap<&str, &ToSql>; // all columns except primary key.
 
+	fn all(conn: &'a DbConn) -> Vec<Self> {
+		let sql = format!("SELECT * FROM {}", Self::table_name());
+		let mut result = Vec::new();
+		for row in conn.query(&sql, &[]).unwrap().into_iter() {
+			result.push(Self::from_row(conn, row));
+		}
+		result
+	}
 	fn find(conn: &'a DbConn, id: i32) -> Self {
 		let sql = format!("SELECT * FROM {} WHERE id = $1 LIMIT 1", Self::table_name());
 		let rows = conn.query(&sql, &[&id]).unwrap();

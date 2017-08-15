@@ -16,7 +16,7 @@ use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 extern crate r2d2;
 
 mod model;
-use model::DbConn;
+use model::*;
 
 type Pool = r2d2::Pool<PostgresConnectionManager>;
 
@@ -32,8 +32,17 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     }
 }
 
-#[get("/<body>")]
-fn create(conn: DbConn, body: &RawStr) -> String {
+#[get("/<username>/<body>")]
+fn create(conn: DbConn, username: &RawStr, body: &RawStr) -> String {
+    let mut q = Question {
+        conn: &conn,
+        id: None,
+        username: username.to_string(),
+        body: body.to_string()
+    };
+    println!("{:?}", q.id);
+    q.insert();
+    println!("{:?}", q.id);
 	String::from("create!")
 }
 

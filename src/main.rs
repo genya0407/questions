@@ -15,22 +15,18 @@ use r2d2_postgres::{TlsMode, PostgresConnectionManager};
 
 extern crate r2d2;
 
-use std::thread;
-
-mod repository;
-use repository::DbConn;
-mod entity;
-use entity::{Question, User};
+mod model;
+use model::DbConn;
 
 type Pool = r2d2::Pool<PostgresConnectionManager>;
 
 impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<repository::DbConn, ()> {
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<model::DbConn, ()> {
         let pool = request.guard::<State<Pool>>()?;
         match pool.get() {
-            Ok(conn) => Outcome::Success(repository::DbConn(conn)),
+            Ok(conn) => Outcome::Success(model::DbConn(conn)),
             Err(_) => Outcome::Failure((Status::ServiceUnavailable, ()))
         }
     }
@@ -38,16 +34,12 @@ impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
 
 #[get("/<body>")]
 fn create(conn: DbConn, body: &RawStr) -> String {
-	repository::question::create(conn, &10, &body.to_string());
-
-	"Create!".to_string()
+	String::from("create!")
 }
 
 #[get("/")]
 fn index(conn: DbConn) -> String {
-	let questions = repository::question::all(conn);
-
-	questions.iter().map(|q| q.body.clone()).collect::<Vec<String>>().join("-")
+    String::from("index!")
 }
 
 fn main() {

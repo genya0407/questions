@@ -56,7 +56,7 @@ pub trait ActiveRecord<'a> : Sized {
 	fn columns(&self) -> HashMap<&str, &ToSql>; // all columns except primary key.
 
 	fn find(conn: &'a DbConn, id: i32) -> Self {
-		let sql = format!("SELECT * FROM {} WHERE id = ? LIMIT 1", Self::table_name());
+		let sql = format!("SELECT * FROM {} WHERE id = $1 LIMIT 1", Self::table_name());
 		let rows = conn.query(&sql, &[&id]).unwrap();
 		Self::from_row(conn, rows.get(0))
 	}
@@ -69,8 +69,8 @@ pub trait ActiveRecord<'a> : Sized {
 		results
 	}
 	fn update(&self) {
-		let set_stmt = self.columns().into_iter()
-                             .map(|(k, _)| format!("{} = ?", k))
+		let set_stmt = self.columns().into_iter().enumerate()
+                             .map(|(i, (k, _))| format!("{} = ${}", k, i+1))
                              .collect::<Vec<String>>()
                              .join(", ");
 		let stmt = format!(

@@ -2,7 +2,7 @@ use std::ops::Deref;
 use r2d2_postgres::PostgresConnectionManager;
 use r2d2_postgres::postgres::Connection;
 use r2d2_postgres::postgres::rows::Row;
-use r2d2_postgres::postgres::types::{ToSql, FromSql};
+use r2d2_postgres::postgres::types::ToSql;
 use r2d2;
 
 use std::collections::HashMap;

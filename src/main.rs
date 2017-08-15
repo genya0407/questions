@@ -48,7 +48,8 @@ fn create(conn: DbConn, username: &RawStr, body: &RawStr) -> String {
 
 #[get("/")]
 fn index(conn: DbConn) -> String {
-    String::from("index!")
+    let qs = Question::all(&conn);
+    qs.into_iter().map(|q| q.username).collect::<Vec<String>>().join(", ")
 }
 
 fn main() {

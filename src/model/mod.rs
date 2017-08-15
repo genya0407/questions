@@ -1,14 +1,19 @@
-use std::ops::Deref;
-use r2d2_postgres::PostgresConnectionManager;
-use r2d2_postgres::postgres::Connection;
-use r2d2_postgres::postgres::rows::Row;
-use r2d2_postgres::postgres::types::ToSql;
-use r2d2;
+extern crate r2d2_postgres;
+extern crate r2d2;
 
+use self::r2d2_postgres::PostgresConnectionManager;
+use self::r2d2_postgres::postgres::Connection;
+use self::r2d2_postgres::postgres::rows::Row;
+use self::r2d2_postgres::postgres::types::ToSql;
+use self::r2d2::PooledConnection;
+
+use std::ops::Deref;
 use std::collections::HashMap;
 use std::marker::Sized;
 
-pub struct DbConn(pub r2d2::PooledConnection<PostgresConnectionManager>);
+pub mod config;
+
+pub struct DbConn(pub PooledConnection<PostgresConnectionManager>);
 
 impl Deref for DbConn {
     type Target = Connection;

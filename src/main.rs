@@ -10,15 +10,9 @@ use rocket::http::RawStr;
 extern crate rocket_contrib;
 use rocket_contrib::Template;
 
-extern crate r2d2_postgres;
-use r2d2_postgres::{TlsMode, PostgresConnectionManager};
-
-extern crate r2d2;
-
 mod model;
 use model::*;
-
-type Pool = r2d2::Pool<PostgresConnectionManager>;
+use model::config::Pool;
 
 impl<'a, 'r> FromRequest<'a, 'r> for DbConn {
     type Error = ();
@@ -51,13 +45,7 @@ fn index(conn: DbConn) -> String {
 }
 
 fn main() {
-    let config = r2d2::Config::default();
-    let manager = PostgresConnectionManager::new(
-    	"postgresql://question:question@localhost/question",
-    	TlsMode::None
-    ).unwrap();
-    let pool: Pool = r2d2::Pool::new(config, manager).unwrap();
-
+    let pool = model::config::get_pool();
 	rocket::ignite()
 		.manage(pool)
 		.attach(Template::fairing())
